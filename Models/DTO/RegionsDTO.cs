@@ -19,5 +19,11 @@ namespace apiNZWalks.Models.DTO{
 
         public string? RegionImageUrl { get; set; }  
      }
+
+     public class updateRegionDTO{
+      public string? Code { get; set; }
+      public string? Name { get; set; }
+        public string? RegionImageUrl { get; set; }  
+     }
 }
 

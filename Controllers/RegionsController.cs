@@ -7,6 +7,7 @@ using apiNZWalks.Models.Domain;
 using apiNZWalks.Data;
 using apiNZWalks.Models.DTO;
 using Microsoft.Identity.Client;
+using Microsoft.EntityFrameworkCore;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace apiNZWalks.Controllers
@@ -88,9 +89,49 @@ namespace apiNZWalks.Controllers
                 RegionImageUrl=regionModel.RegionImageUrl
             };
             _context.SaveChanges();
+
+            //createdAtAction use the 201 status code (resource created)
             return CreatedAtAction(nameof(createRegion), new {
                 id=regionModel.Id,
             },regionDTO);
+        }
+
+
+        [HttpPatch]
+        [Route("{id:Guid}")]
+        public IActionResult updateRegion([FromRoute] Guid id,[FromBody] updateRegionDTO updateDto){
+             var region = _context.Regions.FirstOrDefault(a => a.Id==id);
+            if(region == null){
+                return NotFound();
+            }
+           if(updateDto.Code!=null) region.Code=updateDto.Code;
+           if(updateDto.Name!=null) region.Name=updateDto.Name;
+           if(updateDto.RegionImageUrl!=null) region.RegionImageUrl=updateDto.RegionImageUrl;
+            //update the value
+            _context.SaveChanges();
+
+            var regionDTO=new RegionsDTO(){
+                Id=region.Id,
+                Code=region.Code,
+                Name=region.Name,
+                RegionImageUrl=region.RegionImageUrl
+            };
+            return Ok(regionDTO);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult updateRegion([FromRoute] Guid id){
+            var region = _context.Regions.FirstOrDefault(a => a.Id==id);
+            if(region == null){
+                return NotFound();
+            }
+
+            _context.Regions.Remove(region);
+            _context.SaveChanges();
+
+
+            return Ok("Succesfully deleted!1");
         }
     }
 }
