@@ -68,8 +68,29 @@ namespace apiNZWalks.Controllers
 
         [HttpPost]
         [Route("add")]
-        public IActionResult createRegion([FromBody] RegionsDTO dtt){
-            return Ok("Working");
+        public IActionResult createRegion([FromBody] AddRegionDTO data){
+            //Convert it into domain model
+            var regionModel=new Region(){
+                Id=new Guid(),
+                Code=data.Code,
+                Name=data.Name,
+                RegionImageUrl=data.RegionImageUrl
+            };
+
+            _context.Regions.Add(regionModel);
+            //save the data to the database
+
+            //convert the data back to DTO
+            var regionDTO=new RegionsDTO(){
+                Id=regionModel.Id,
+                Code=regionModel.Code,
+                Name=regionModel.Name,
+                RegionImageUrl=regionModel.RegionImageUrl
+            };
+            _context.SaveChanges();
+            return CreatedAtAction(nameof(createRegion), new {
+                id=regionModel.Id,
+            },regionDTO);
         }
     }
 }
